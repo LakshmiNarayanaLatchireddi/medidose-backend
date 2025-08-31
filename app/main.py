@@ -19,3 +19,5 @@ def db_check():
     return {"db": "ok", "value": v}
 from app.routers import users as users_router
 app.include_router(users_router.router)
+from app.routers import patients as patients_router
+app.include_router(patients_router.router)
