@@ -2,6 +2,7 @@ from fastapi import APIRouter, Depends, HTTPException, Query, status
 from pydantic import BaseModel, Field
 from sqlalchemy.orm import Session
 from datetime import date
+
 from app.utils.db import SessionLocal
 from app.models.user import User
 from app.models.patient import Patient
@@ -15,7 +16,7 @@ def get_db():
     finally:
         db.close()
 
-# --------- Schemas ----------
+# ---- Schemas ----
 class PatientCreate(BaseModel):
     user_id: int = Field(..., description="Existing user id (doctor or patient)")
     full_name: str
@@ -40,10 +41,10 @@ class PatientOut(BaseModel):
     class Config:
         from_attributes = True
 
-# --------- Routes ----------
+# ---- Routes ----
 @router.post("", response_model=PatientOut, status_code=status.HTTP_201_CREATED)
 def create_patient(payload: PatientCreate, db: Session = Depends(get_db)):
-    # Ensure user exists
+    # ensure linked user exists
     user = db.query(User).filter(User.id == payload.user_id).first()
     if not user:
         raise HTTPException(status_code=404, detail="Linked user not found")
